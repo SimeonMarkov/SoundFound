@@ -77,7 +77,7 @@ public class SearchActivity extends AppCompatActivity
                         artist = songAndArtist[0].trim();
                         song = songAndArtist[1].trim();
                     } catch (ArrayIndexOutOfBoundsException e) {
-                        Toast.makeText(getApplicationContext(), "Search should be in format {artist} - {song}", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Search should be in format {artist} - {song}", Toast.LENGTH_SHORT).show();
                         searchText.setText("");
                         searchResult.setText("");
                         saveImage.setVisibility(View.INVISIBLE);

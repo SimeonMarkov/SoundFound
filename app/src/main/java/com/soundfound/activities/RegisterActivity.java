@@ -31,19 +31,19 @@ public class RegisterActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     Log.i(RegisterActivity.class.getName(), "User " + email + " registered");
-                    Toast.makeText(getApplicationContext(), "Successful registration", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Successful registration", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getBaseContext(), LoginActivity.class);
                     startActivity(intent);
                 }
                 else {
                     if(mydb.existsUser(email)) {
-                        Toast.makeText(getApplicationContext(), "User with this e-mail already exists", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "User with this e-mail already exists", Toast.LENGTH_SHORT).show();
                     }
                     else if(!mydb.isValidEmail(email)) {
-                        Toast.makeText(getApplicationContext(), "Invalid email", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Invalid email", Toast.LENGTH_SHORT).show();
                     }
                     else {
-                        Toast.makeText(getApplicationContext(), "Passwords do not match", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Passwords do not match", Toast.LENGTH_SHORT).show();
                     }
                     ((EditText) findViewById(R.id.email_register_text)).setText("");
                     ((EditText) findViewById(R.id.register_password)).setText("");

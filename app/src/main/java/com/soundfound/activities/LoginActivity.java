@@ -50,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
                 else {
-                    Toast.makeText(getApplicationContext(), "E-mail or password is not correct!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "E-mail or password is not correct!", Toast.LENGTH_SHORT).show();
                     ((EditText) findViewById(R.id.email)).setText("");
                     ((EditText) findViewById(R.id.password)).setText("");
                 }
