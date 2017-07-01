@@ -23,6 +23,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.soundfound.R;
 import com.soundfound.db.DBHelper;
 
@@ -33,17 +40,11 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class SearchActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = SearchActivity.class.getName();
-    private OkHttpClient okHttpClient;
 
     private Request request;
 
@@ -68,7 +69,6 @@ public class SearchActivity extends AppCompatActivity
                 if(!StringUtils.isBlank(searchText.getText())) {
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
                     Log.i(SearchActivity.class.getName(), "Searching song " + searchText.getText());
-                    okHttpClient = new OkHttpClient();
                     String[] songAndArtist = searchText.getText().toString().split("-");
                     String artist;
                     final String song;
@@ -87,26 +87,20 @@ public class SearchActivity extends AppCompatActivity
 
 
                     final String url = "http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=" + API_KEY + "&artist=" + artist + "&track=" + song + "&format=json";
-                    request = new Request.Builder().url(url).build();
-                    okHttpClient.newCall(request).enqueue(new Callback() {
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                            Log.i(TAG, e.getMessage());
-                        }
+                    RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
 
+                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                         @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            try {
-                                final JSONObject responseObject = new JSONObject(response.body().string());
-                                Log.i(TAG, url + "\n" + responseObject.toString());
+                        public void onResponse(final JSONObject response) {
+                                Log.i(TAG, url + "\n" + response.toString());
                                 v.post(new Runnable() {
                                     @Override
                                     public void run() {
                                         try {
                                             searchResult
-                                                    .setText(responseObject.getJSONObject("track").getJSONObject("artist").getString("name")
-                                                            + "-" + responseObject.getJSONObject("track").getString("name")
-                                                            + "\t" + convertLongToMinutesFormat(responseObject.getJSONObject("track").getLong("duration")));
+                                                    .setText(response.getJSONObject("track").getJSONObject("artist").getString("name")
+                                                            + "-" + response.getJSONObject("track").getString("name")
+                                                            + "\t" + convertLongToMinutesFormat(response.getJSONObject("track").getLong("duration")));
                                             saveImage.setVisibility(View.VISIBLE);
                                             searchText.setText("");
                                             saveImage.setOnClickListener(new View.OnClickListener() {
@@ -134,11 +128,15 @@ public class SearchActivity extends AppCompatActivity
                                     }
                                 });
 
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
                         }
                     });
+                    queue.add(jsonObjectRequest);
 
                     handled = true;
                 }
