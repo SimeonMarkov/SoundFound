@@ -11,6 +11,7 @@ import com.j256.ormlite.android.AndroidConnectionSource;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.soundfound.model.Song;
@@ -105,7 +106,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Dao<User, String> userDao = null;
         try {
             userDao = createDao(connectionSource, User.class);
-            return userDao.queryBuilder().where().eq("email", email).queryForFirst();
+            return userDao.queryBuilder().where().eq("email", email).and().eq("password", password).queryForFirst();
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
